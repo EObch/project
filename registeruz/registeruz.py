@@ -76,7 +76,6 @@ def uctovne_jednotky(zmenene_od=None,pokracovat_za_id=None,max_zaznamov=None,ico
         for f in config.DATE_TIME_FORMATS:
             try:
                 date = datetime.datetime.strptime(zmenene_od, f)
-                print("trystatemne ok ")
                 valid_time+=1
             except ValueError as err:
                 pass
