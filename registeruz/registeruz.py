@@ -6,9 +6,6 @@ import datetime
 from . import config
 
 
-#         with open(str(id)+".json", "w") as write_file:
-#             json.dump(response.json(), write_file, sort_keys=True)
-
 def get_data(URL=None,params=None):
     if URL is None or params is None:
         raise ValueError('RegisterUZ get_data: Missing URL or parameters')
@@ -17,7 +14,6 @@ def get_data(URL=None,params=None):
             response = requests.get(url = URL, params = params, timeout=5)
             response.raise_for_status()
             return response.json()
-#             return json.loads(response.text)
 
         except requests.exceptions.HTTPError as errh:
             print(errh)
@@ -27,7 +23,8 @@ def get_data(URL=None,params=None):
             print(errt)
         except requests.exceptions.RequestException as err:
             print(err)
-
+        except json.decoder.JSONDecodeError:
+            raise RuntimeError('RegisterUZ get_data: server response is not JSON')
 
 def write_csv(data, name="output"):
 #     df = pd.DataFrame.from_dict(data)
@@ -67,9 +64,8 @@ def uctovna_jednotka(id=0, csv_file=True):
     return None
         
 def uctovne_jednotky(zmenene_od=None,pokracovat_za_id=None,max_zaznamov=None,ico=None,dic=None,pravna_forma=None):
-#     kwargs.setdefault('zmenene_od', "2010-01-01")
     params = {}
-    
+
     # kontrola zmenene_od
     if zmenene_od is not None: 
         valid_time = 0
@@ -127,8 +123,7 @@ def uctovne_jednotky(zmenene_od=None,pokracovat_za_id=None,max_zaznamov=None,ico
         else:
             raise ValueError('RegisterUZ uctovne_jednotky: pravna_forma is incorrect')
     
-    print(params)
-    print("url>>>")
+
     d = get_data(config.BASE_URL+config.UCTOVNE_JEDNOTKY,params)
     print("uctovne jednotkyyy")
     print(d)
